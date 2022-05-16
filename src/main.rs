@@ -5,6 +5,7 @@ use std::path::Path;
 fn main() {
     let mut depth = 0;
     let mut horizontal = 0;
+    let mut aim = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines {
@@ -15,9 +16,9 @@ fn main() {
                 let amt = amt.parse::<i32>().unwrap();
 
                 match cmd {
-                    "forward" => horizontal += amt,
-                    "up" => depth -= amt,
-                    "down" => depth += amt,
+                    "forward" => {horizontal += amt; depth += amt * aim},
+                    "up" => aim -= amt,
+                    "down" => aim += amt,
                     _ => panic!("Unrecognised command!")
                 }
             }
