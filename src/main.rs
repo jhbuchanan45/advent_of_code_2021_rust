@@ -78,9 +78,9 @@ fn main() {
         results.push(message);
     }
 
-    let &fastest_result = results.iter().min_by_key(|(turns, _, _)| turns).unwrap();
+    let &worst_result = results.iter().max_by_key(|(turns, _, _)| turns).unwrap();
 
-    let score = score_board(fastest_result.2, fastest_result.1);
+    let score = score_board(worst_result.2, worst_result.1);
 
     println!("Score: {}", score);
 }
