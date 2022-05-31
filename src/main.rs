@@ -3,36 +3,57 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 fn main() {
-    let days = 256;
-    let mut timer_counts: [u64; 9] = [0; 9];
+    let mut crabs = Vec::new();
+    let mut max_len = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines {
-            let clocks = line.unwrap();
+            let line = line.unwrap();
 
-            for clock in clocks.split(',') {
-                timer_counts[clock.parse::<usize>().unwrap()] += 1;
+            for crab_pos in line.split(',') {
+                let pos = crab_pos.parse::<usize>().unwrap();
+                crabs.push(pos);
+
+                if max_len < pos {
+                    max_len = pos + 1;
+                }
             }
         }
     }
 
-    for _ in 0..days {
-        let mut new_timers = [0; 9];
-        for (i, count) in timer_counts.iter().enumerate() {
-            if i == 0 {
-                new_timers[6] += count;
-                new_timers[8] += count;
-            } else {
-                new_timers[i-1] += count;
-            }
-        }
+    let mut crab_counts = vec![0; max_len];
 
-        timer_counts = new_timers;
+    for crab in crabs {
+        crab_counts[crab] += 1;
     }
 
-    let total = timer_counts.iter().sum::<u64>(); 
+    // get score for 0 pos
+    let mut left_cost = 0;
+    let mut right_cost = 0;
+    let mut right_count = 0;
+    let mut left_count = 0;
 
-    println!("{}", total);
+    for i in 1..max_len {
+        right_cost += i * crab_counts[i];
+        right_count += crab_counts[i];
+    }
+
+    let mut min_cost = right_cost;
+
+    // move right, updating score for each left and right sides
+    for i in 1..max_len {
+        right_cost -= right_count;
+        right_count -= crab_counts[i];
+
+        left_count += crab_counts[i - 1];
+        left_cost += left_count;
+
+        if left_cost + right_cost < min_cost {
+            min_cost = left_cost + right_cost;
+        }
+    }
+
+    println!("{:?}", min_cost);
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
