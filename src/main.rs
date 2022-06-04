@@ -22,35 +22,25 @@ fn main() {
     }
 
     let mut crab_counts = vec![0; max_len];
+    let mut min_cost = i32::MAX;
 
     for crab in crabs {
         crab_counts[crab] += 1;
     }
 
-    // get score for 0 pos
-    let mut left_cost = 0;
-    let mut right_cost = 0;
-    let mut right_count = 0;
-    let mut left_count = 0;
+    // calculate score for each pos
+    for pos in 0..max_len {
+        let mut score = 0;
 
-    for i in 1..max_len {
-        right_cost += i * crab_counts[i];
-        right_count += crab_counts[i];
-    }
-
-    let mut min_cost = right_cost;
-
-    // move right, updating score for each left and right sides
-    for i in 1..max_len {
-        right_cost -= right_count;
-        right_count -= crab_counts[i];
-
-        left_count += crab_counts[i - 1];
-        left_cost += left_count;
-
-        if left_cost + right_cost < min_cost {
-            min_cost = left_cost + right_cost;
+        // get score
+        for i in 0..max_len {
+            let dist = (pos as i32 - i as i32).abs();
+            score += crab_counts[i] * ((dist * (dist + 1)) / 2);
         }
+
+        if score < min_cost {
+            min_cost = score;
+        };
     }
 
     println!("{:?}", min_cost);
